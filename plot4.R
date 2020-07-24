@@ -1,0 +1,49 @@
+## Program: plot4.R
+
+## Read input file
+DataFileName <- "household_power_consumption.txt"
+DataFile <- read.table(DataFileName, header = TRUE, sep = ";")
+
+## Select information for dates of interest
+DataFile <- DataFile[DataFile$Date == "1/2/2007" | DataFile$Date == "2/2/2007",]
+
+## Convert columns required for the plot
+DataFile$Date <- strptime(paste(DataFile$Date, DataFile$Time, sep = " "),
+                          format = '%d/%m/%Y %H:%M:%S')
+DataFile$Global_active_power <- as.numeric(DataFile$Global_active_power)
+DataFile$Global_reactive_power <- as.numeric(DataFile$Global_reactive_power)
+DataFile$Voltage <- as.numeric(DataFile$Voltage)
+DataFile$Sub_metering_1 <- as.numeric(DataFile$Sub_metering_1)
+DataFile$Sub_metering_2 <- as.numeric(DataFile$Sub_metering_2)
+
+## Plot according with the specification given
+png("plot4.png", width = 480, height = 480, units = "px")
+
+par(mfrow=c(2,2))
+
+plot(DataFile$Date, DataFile$Global_active_power,
+     type = "l",
+     ylab = "Global active power",
+     xlab = "")
+
+plot(DataFile$Date, DataFile$Voltage,
+     type = "l",
+     ylab = "Voltage",
+     xlab = "datetime")
+
+plot(DataFile$Date, DataFile$Sub_metering_1, 
+     type = "l",
+     ylab = "Energy sub metering",
+     xlab = "")
+lines(DataFile$Date, DataFile$Sub_metering_2, col = "red")
+lines(DataFile$Date, DataFile$Sub_metering_3, col = "blue")
+legend("topright", pch = "_", col = c("black", "red", "blue"),
+       legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+       bty = "n")
+
+plot(DataFile$Date, DataFile$Global_reactive_power,
+     type = "l",
+     ylab = "Global_reactive_power",
+     xlab = "datetime")
+
+dev.off()
